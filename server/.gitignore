@@ -31,11 +31,6 @@ dist-ssr
 .env.test
 .env.production
 
-# Server Environment Files - DO NOT COMMIT THESE FILES!
-# They contain sensitive server configuration and credentials
-../server/.env
-../server/.env.*
-
 # Sensitive files
 *.pem
 *.key
