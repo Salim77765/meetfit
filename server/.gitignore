@@ -40,3 +40,7 @@ dist-ssr
 *.pfx
 *.keystore
 *.jks
+
+# Uploads directory - contains user uploaded files
+uploads/
+uploads/*

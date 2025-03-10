@@ -7,15 +7,18 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+dist-ssr/
 *.local
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
@@ -23,18 +26,12 @@ dist-ssr
 *.sln
 *.sw?
 
-# Environment Variables - DO NOT COMMIT THESE FILES!
-# They contain sensitive information like API keys and credentials
+# Environment Variables
 .env
 .env.local
 .env.development
 .env.test
 .env.production
-
-# Server Environment Files - DO NOT COMMIT THESE FILES!
-# They contain sensitive server configuration and credentials
-../server/.env
-../server/.env.*
 
 # Sensitive files
 *.pem
@@ -46,7 +43,9 @@ dist-ssr
 *.keystore
 *.jks
 
-
 # Uploads directory - contains user uploaded files
+# This ensures uploads are not tracked at any level in the repository
 uploads/
 uploads/*
+server/uploads/
+server/uploads/*
