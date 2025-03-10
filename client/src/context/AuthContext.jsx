@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       setError(null);
-      const res = await axios.post('/auth/register', userData);
+      const res = await axios.post('/api/auth/register', userData);
       
       if (res.data.success) {
         localStorage.setItem('token', res.data.token);
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (userData) => {
     try {
       setError(null);
-      const res = await axios.post('/auth/login', userData);
+      const res = await axios.post('/api/auth/login', userData);
       
       if (res.data.success) {
         localStorage.setItem('token', res.data.token);
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async (profileData) => {
     try {
       setError(null);
-      const res = await axios.put('/auth/profile', profileData);
+      const res = await axios.put('/api/auth/profile', profileData);
       
       if (res.data.success) {
         setUser(res.data.user);
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }) => {
   const updateProfileImage = async (formData) => {
     try {
       setError(null);
-      const res = await axios.put('/auth/profile/image', formData, {
+      const res = await axios.put('/api/auth/profile/image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }) => {
       }
       
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const res = await axios.get('/auth/profile');
+      const res = await axios.get('/api/auth/profile');
       
       if (res.data.success) {
         setUser(res.data.user);
