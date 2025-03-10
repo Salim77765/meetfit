@@ -8,13 +8,13 @@ services:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 10000
+        value: 5000
       - key: CLIENT_URL
-        sync: false
+        sync: true
       - key: MONGODB_URI
-        sync: false
+        sync: true
       - key: JWT_SECRET
-        sync: false
+        sync: true
       - key: JWT_EXPIRES_IN
         value: 30d
       - key: UPLOAD_PATH
