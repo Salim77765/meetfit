@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: meetfit-server
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: CLIENT_URL
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 30d
+      - key: UPLOAD_PATH
+        value: uploads/
+      - key: MAX_FILE_SIZE
+        value: 5000000
