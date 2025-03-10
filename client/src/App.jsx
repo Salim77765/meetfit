@@ -14,7 +14,7 @@ import MobileMenu from './components/MobileMenu';
 import './App.css';
 
 // Set default axios base URL
-axios.defaults.baseURL = 'http://localhost:5000/api';
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
