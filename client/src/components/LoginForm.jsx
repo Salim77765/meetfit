@@ -29,7 +29,7 @@ const LoginForm = () => {
     try {
       const success = await login(formData);
       if (success) {
-        navigate('/profile');
+        navigate('/home');
       }
     } catch (err) {
       setError('Login failed');
