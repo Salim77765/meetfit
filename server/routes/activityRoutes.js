@@ -8,7 +8,8 @@ import {
   joinActivity,
   leaveActivity,
   getMyActivities,
-  getJoinedActivities
+  getJoinedActivities,
+  getRecommendedActivities
 } from '../controllers/activityController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -26,5 +27,6 @@ router.post('/:id/join', protect, joinActivity);
 router.post('/:id/leave', protect, leaveActivity);
 router.get('/user/created', protect, getMyActivities);
 router.get('/user/joined', protect, getJoinedActivities);
+router.get('/user/recommended', protect, getRecommendedActivities);
 
 export default router;

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './MobileMenu.css';
 
-const MobileMenu = ({ isAuthenticated, handleLogout }) => {
+const MobileMenu = ({ isAuthenticated, handleLogout, toggleChatbot }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -33,6 +33,13 @@ const MobileMenu = ({ isAuthenticated, handleLogout }) => {
                 <li><a href="/activities" onClick={closeMenu}>Activities</a></li>
                 <li><a href="/my-activities" onClick={closeMenu}>My Activities</a></li>
                 <li><a href="/profile" onClick={closeMenu}>Profile</a></li>
+                <li>
+                  <a href="#" onClick={(e) => {
+                    e.preventDefault();
+                    closeMenu();
+                    toggleChatbot();
+                  }} className="chatbot-nav-icon">💬 Assistant</a>
+                </li>
                 <li>
                   <a href="#" onClick={(e) => {
                     e.preventDefault();

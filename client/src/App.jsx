@@ -11,6 +11,7 @@ import CreateActivity from './components/CreateActivity';
 import ActivityDetail from './components/ActivityDetail';
 import HomePage from './components/HomePage';
 import MobileMenu from './components/MobileMenu';
+import ChatBot from './components/ChatBot';
 import './App.css';
 
 // Set default axios base URL
@@ -31,6 +32,7 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   const { isAuthenticated, user, loading, logout, loadUser } = useAuth();
+  const [chatbotOpen, setChatbotOpen] = useState(false);
 
   // Check if user is authenticated on app load
   useEffect(() => {
@@ -44,6 +46,10 @@ function App() {
   const handleLogout = () => {
     logout();
     window.location.href = '/';
+  };
+
+  const toggleChatbot = () => {
+    setChatbotOpen(!chatbotOpen);
   };
 
   return (
@@ -62,6 +68,14 @@ function App() {
                   <li>
                     <a href="#" onClick={(e) => {
                       e.preventDefault();
+                      toggleChatbot();
+                    }} className="chatbot-nav-icon">
+                      💬 Assistant
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" onClick={(e) => {
+                      e.preventDefault();
                       handleLogout();
                     }}>Logout</a>
                   </li>
@@ -76,7 +90,8 @@ function App() {
           </nav>
           <MobileMenu 
             isAuthenticated={isAuthenticated} 
-            handleLogout={handleLogout} 
+            handleLogout={handleLogout}
+            toggleChatbot={toggleChatbot}
           />
         </header>
         <main className="main-content">
@@ -112,12 +127,13 @@ function App() {
             <Route path="*" element={<div>Page Not Found</div>} />
           </Routes>
         </main>
+        {isAuthenticated && <ChatBot forcedOpen={chatbotOpen} onClose={() => setChatbotOpen(false)} />}
         <footer className="app-footer">
           <p>&copy; {new Date().getFullYear()} MeetFit. All rights reserved.</p>
         </footer>
       </div>
     </Router>
-  )
+  );
 }
 
 export default App

@@ -11,11 +11,61 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+
+  // Validate password strength
+  const validatePassword = (password) => {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    const errors = [];
+    if (password.length < minLength) errors.push(`Password must be at least ${minLength} characters long`);
+    if (!hasUpperCase) errors.push('Password must contain at least one uppercase letter');
+    if (!hasLowerCase) errors.push('Password must contain at least one lowercase letter');
+    if (!hasNumbers) errors.push('Password must contain at least one number');
+    if (!hasSpecialChar) errors.push('Password must contain at least one special character');
+
+    return errors;
+  };
+
+  // Validate password with regex
+  const validatePasswordWithRegex = (password) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
+  // Validate email format
+  const validateEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return emailRegex.test(email);
+  };
+
   // Register user
   const register = async (userData) => {
     try {
       setError(null);
-      const res = await axios.post('/api/auth/register', userData);
+
+      // Client-side validation
+      if (!userData.username || userData.username.length < 3) {
+        setError('Username must be at least 3 characters long');
+        return false;
+      }
+
+      if (!validateEmail(userData.email)) {
+        setError('Please enter a valid email address');
+        return false;
+      }
+
+      // Use regex validation for consistency with server-side validation
+      if (!validatePasswordWithRegex(userData.password)) {
+        const passwordErrors = validatePassword(userData.password);
+        setError(passwordErrors.join('\n'));
+        return false;
+      }
+
+      const res = await axios.post('/auth/register', userData);
       
       if (res.data.success) {
         localStorage.setItem('token', res.data.token);
@@ -25,7 +75,18 @@ export const AuthProvider = ({ children }) => {
         return true;
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      const errorMessage = err.response?.data?.message;
+      if (errorMessage?.includes('already exists')) {
+        setError('A user with this email or username already exists');
+      } else if (errorMessage?.includes('Password')) {
+        setError(errorMessage);
+      } else if (errorMessage?.includes('Email')) {
+        setError('Please enter a valid email address');
+      } else if (errorMessage?.includes('Username')) {
+        setError('Username must be at least 3 characters long');
+      } else {
+        setError('Registration failed. Please try again.');
+      }
       return false;
     }
   };
@@ -34,7 +95,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (userData) => {
     try {
       setError(null);
-      const res = await axios.post('/api/auth/login', userData);
+      const res = await axios.post('/auth/login', userData);
       
       if (res.data.success) {
         localStorage.setItem('token', res.data.token);
@@ -61,7 +122,7 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async (profileData) => {
     try {
       setError(null);
-      const res = await axios.put('/api/auth/profile', profileData);
+      const res = await axios.put('/auth/profile', profileData);
       
       if (res.data.success) {
         setUser(res.data.user);
@@ -77,7 +138,7 @@ export const AuthProvider = ({ children }) => {
   const updateProfileImage = async (formData) => {
     try {
       setError(null);
-      const res = await axios.put('/api/auth/profile/image', formData, {
+      const res = await axios.put('/auth/profile/image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -104,7 +165,7 @@ export const AuthProvider = ({ children }) => {
       }
       
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const res = await axios.get('/api/auth/profile');
+      const res = await axios.get('/auth/profile');
       
       if (res.data.success) {
         setUser(res.data.user);

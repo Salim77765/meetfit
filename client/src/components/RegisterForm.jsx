@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './RegisterForm.css';
 import LocationPicker from './LocationPicker';
+import { FaCamera } from 'react-icons/fa';
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -16,8 +17,10 @@ const RegisterForm = () => {
     bio: '',
     location: '',
     interests: [],
-    activityPreferences: []
+    activityPreferences: [],
+    profilePhoto: null
   });
+  const [photoPreview, setPhotoPreview] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -45,10 +48,65 @@ const RegisterForm = () => {
     }));
   };
 
+  const validatePassword = (password) => {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (password.length < minLength) return 'Password must be at least 8 characters long';
+    if (!hasUpperCase) return 'Password must contain at least one uppercase letter';
+    if (!hasLowerCase) return 'Password must contain at least one lowercase letter';
+    if (!hasNumbers) return 'Password must contain at least one number';
+    if (!hasSpecialChar) return 'Password must contain at least one special character';
+    return null;
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        setError('Photo size should not exceed 5MB');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result);
+        setFormData(prev => ({ ...prev, profilePhoto: file }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address');
+      setLoading(false);
+      return;
+    }
+
+    // Validate username
+    if (formData.username.length < 3) {
+      setError('Username must be at least 3 characters long');
+      setLoading(false);
+      return;
+    }
+
+    // Validate password
+    const passwordError = validatePassword(formData.password);
+    if (passwordError) {
+      setError(passwordError);
+      setLoading(false);
+      return;
+    }
 
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
@@ -58,8 +116,23 @@ const RegisterForm = () => {
     }
 
     try {
-      const { confirmPassword, ...registerData } = formData;
-      const success = await register(registerData);
+      const { confirmPassword, profilePhoto, ...registerData } = formData;
+      
+      // Create FormData for multipart/form-data
+      const formDataToSend = new FormData();
+      Object.keys(registerData).forEach(key => {
+        if (Array.isArray(registerData[key])) {
+          formDataToSend.append(key, JSON.stringify(registerData[key]));
+        } else {
+          formDataToSend.append(key, registerData[key]);
+        }
+      });
+      
+      if (profilePhoto) {
+        formDataToSend.append('profilePhoto', profilePhoto);
+      }
+      
+      const success = await register(formDataToSend);
       
       if (success) {
         navigate('/profile');
@@ -110,7 +183,7 @@ const RegisterForm = () => {
             value={formData.password}
             onChange={handleChange}
             required
-            minLength={6}
+            minLength={8}
           />
         </div>
 
@@ -124,6 +197,29 @@ const RegisterForm = () => {
             onChange={handleChange}
             required
           />
+        </div>
+
+        <div className="form-group photo-upload-group">
+          <label>Profile Photo</label>
+          <div className="photo-upload-container">
+            <input
+              type="file"
+              id="profilePhoto"
+              accept="image/*"
+              onChange={handlePhotoChange}
+              className="photo-input"
+            />
+            <label htmlFor="profilePhoto" className="photo-upload-label">
+              {photoPreview ? (
+                <img src={photoPreview} alt="Profile preview" className="photo-preview" />
+              ) : (
+                <div className="photo-placeholder">
+                  <FaCamera />
+                  <span>Upload Photo</span>
+                </div>
+              )}
+            </label>
+          </div>
         </div>
 
         <div className="form-group">

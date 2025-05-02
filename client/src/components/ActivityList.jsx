@@ -101,12 +101,7 @@ const ActivityList = () => {
           onLocationSelect={handleLocationSelect}
         />
 
-        <input
-          type="date"
-          name="dateFrom"
-          value={filters.dateFrom}
-          onChange={handleFilterChange}
-        />
+       
 
         <input
           type="date"

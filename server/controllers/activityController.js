@@ -344,3 +344,53 @@ export const getJoinedActivities = async (req, res) => {
     });
   }
 };
+
+// Get recommended activities for the current user
+export const getRecommendedActivities = async (req, res) => {
+  try {
+    // Get user data to find their interests and preferences
+    const user = await User.findById(req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Get user's interests and preferences
+    const userInterests = user.interests || [];
+    const userPreferences = user.activityPreferences || [];
+    
+    // Find activities that match user interests and preferences
+    // Exclude activities the user has already joined or created
+    const recommendations = await Activity.find({
+      $and: [
+        { 
+          $or: [
+            { activityType: { $in: userPreferences } },
+            { description: { $regex: userInterests.join('|'), $options: 'i' } }
+          ] 
+        },
+        { participants: { $ne: req.user.id } },
+        { creator: { $ne: req.user.id } },
+        { dateTime: { $gt: new Date() } },
+        { status: 'open' }
+      ]
+    })
+    .sort({ dateTime: 1 })
+    .limit(5)
+    .populate('creator', 'username name profileImage');
+
+    res.status(200).json({
+      success: true,
+      count: recommendations.length,
+      recommendations
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import ParticipantModal from './ParticipantModal';
 import './MyActivities.css';
 
 const MyActivities = () => {
@@ -10,6 +11,8 @@ const MyActivities = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('created');
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [showParticipants, setShowParticipants] = useState(false);
 
   useEffect(() => {
     fetchMyActivities();
@@ -57,6 +60,11 @@ const MyActivities = () => {
 
   const handleCreateActivity = () => {
     navigate('/create-activity');
+  };
+
+  const handleViewParticipants = (activity) => {
+    setSelectedActivity(activity);
+    setShowParticipants(true);
   };
 
   if (loading) return <div className="loading">Loading your activities...</div>;
@@ -110,6 +118,12 @@ const MyActivities = () => {
                 <p className="status">Status: {activity.status}</p>
                 <div className="action-buttons">
                   <button 
+                    onClick={() => handleViewParticipants(activity)}
+                    className="view-participants-button"
+                  >
+                    View Participants
+                  </button>
+                  <button 
                     onClick={() => handleDeleteActivity(activity._id)}
                     className="delete-button"
                   >
@@ -138,6 +152,12 @@ const MyActivities = () => {
                 <p className="creator">Created by: {activity.creator.username}</p>
                 <div className="action-buttons">
                   <button 
+                    onClick={() => handleViewParticipants(activity)}
+                    className="view-participants-button"
+                  >
+                    View Participants
+                  </button>
+                  <button 
                     onClick={() => handleLeaveActivity(activity._id)}
                     className="leave-button"
                   >
@@ -149,6 +169,14 @@ const MyActivities = () => {
           )
         )}
       </div>
+
+      {showParticipants && selectedActivity && (
+        <ParticipantModal
+          isOpen={showParticipants}
+          onClose={() => setShowParticipants(false)}
+          participants={selectedActivity.participants}
+        />
+      )}
     </div>
   );
 };

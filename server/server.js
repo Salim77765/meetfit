@@ -11,18 +11,13 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: [process.env.CLIENT_URL || 'http://localhost:5173', 'https://meetfit.vercel.app'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: true
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    methods: ['GET', 'POST']
   }
 });
 
 // Middleware
-app.use(cors({
-  origin: [process.env.CLIENT_URL || 'http://localhost:5173', 'https://meetfit.vercel.app'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -50,12 +45,14 @@ io.on('connection', (socket) => {
 import authRoutes from './routes/authRoutes.js';
 import activityRoutes from './routes/activityRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
+import chatbotRoutes from './routes/chatbot.js';
 import path from 'path';
 
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/chats', chatRoutes);
+app.use('/api/chatbot', chatbotRoutes);
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));

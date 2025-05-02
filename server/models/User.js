@@ -20,7 +20,11 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: [true, 'Password is required'],
-    minlength: [6, 'Password must be at least 6 characters'],
+    minlength: [8, 'Password must be at least 8 characters'],
+    match: [
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/,
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+    ],
     select: false
   },
   name: {
@@ -78,7 +82,23 @@ userSchema.pre('save', async function(next) {
 
 // Method to compare password
 userSchema.methods.comparePassword = async function(candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
+  try {
+    if (!candidatePassword) {
+      console.error('Empty password provided for comparison');
+      return false;
+    }
+    
+    if (!this.password) {
+      console.error('User has no password hash stored');
+      return false;
+    }
+    
+    const isMatch = await bcrypt.compare(candidatePassword, this.password);
+    return isMatch;
+  } catch (error) {
+    console.error('Password comparison error:', error);
+    return false;
+  }
 };
 
 const User = model('User', userSchema);
