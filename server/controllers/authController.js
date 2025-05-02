@@ -52,9 +52,12 @@ export const register = async (req, res) => {
     // Check if user already exists
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
+      const message = existingUser.email === email
+        ? 'Email is already registered'
+        : 'Username is already taken';
       return res.status(400).json({
         success: false,
-        message: 'User with this email or username already exists'
+        message
       });
     }
 
@@ -118,7 +121,7 @@ export const login = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: 'User not found with this email'
       });
     }
 
@@ -127,7 +130,7 @@ export const login = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: 'Incorrect password'
       });
     }
 
