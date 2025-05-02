@@ -54,8 +54,17 @@ app.use('/api/activities', activityRoutes);
 app.use('/api/chats', chatRoutes);
 app.use('/api/chatbot', chatbotRoutes);
 
-// Serve uploaded files
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+// Serve static files
+const staticPath = process.env.NODE_ENV === 'production' ? path.join(process.cwd(), 'client', 'dist') : path.join(process.cwd(), 'uploads');
+app.use('/uploads', express.static(staticPath));
+
+// Serve client build in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(process.cwd(), 'client', 'dist')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'client', 'dist', 'index.html'));
+  });
+}
 
 // Socket.io event handlers for real-time chat
 io.on('connection', (socket) => {
