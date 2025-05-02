@@ -15,7 +15,7 @@ import ChatBot from './components/ChatBot';
 import './App.css';
 
 // Set default axios base URL
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'https://meetfit-1.onrender.com/api';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
