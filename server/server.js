@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import { connect } from 'mongoose';
 import { Server } from 'socket.io';
 import { createServer } from 'http';
+import { uploadProfileImage } from './middleware/uploadMiddleware.js';
+import schedule from 'node-schedule';
 
 dotenv.config();
 
@@ -26,6 +28,9 @@ const connectDB = async () => {
   try {
     await connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/meetfit');
     console.log('MongoDB connected successfully');
+    
+    // Setup scheduled tasks after successful database connection
+    setupScheduledTasks();
   } catch (error) {
     console.error('MongoDB connection error:', error);
     process.exit(1);
@@ -55,8 +60,16 @@ app.use('/api/chats', chatRoutes);
 app.use('/api/chatbot', chatbotRoutes);
 
 // Serve static files
-const staticPath = process.env.NODE_ENV === 'production' ? path.join(process.cwd(), 'client', 'dist') : path.join(process.cwd(), 'uploads');
-app.use('/uploads', express.static(staticPath));
+// Serve uploads directory for file access
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
+// Serve client build in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(process.cwd(), 'client', 'dist')));
+}
+
+// Middleware for profile image upload
+app.use(uploadProfileImage);
 
 // Serve client build in production
 if (process.env.NODE_ENV === 'production') {
@@ -98,6 +111,27 @@ io.on('connection', (socket) => {
   });
 });
 
+// Import activity cleanup utilities
+import { cleanupExpiredActivities, deleteOldCompletedActivities } from './utils/activityCleanup.js';
+
+// Setup scheduled tasks
+const setupScheduledTasks = () => {
+  // Run cleanup every hour to mark expired activities as completed
+  schedule.scheduleJob('0 * * * *', async () => {
+    console.log('Running scheduled task: Cleanup expired activities');
+    await cleanupExpiredActivities();
+  });
+  
+  // Run cleanup once a day at midnight to delete old completed activities (30 days old)
+  schedule.scheduleJob('0 0 * * *', async () => {
+    console.log('Running scheduled task: Delete old completed activities');
+    await deleteOldCompletedActivities(30);
+  });
+  
+  console.log('Scheduled tasks have been set up');
+};
+
+// Start server
 const PORT = process.env.PORT || 5000;
 
 httpServer.listen(PORT, async () => {

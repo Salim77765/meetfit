@@ -7,7 +7,7 @@ import { FaCamera } from 'react-icons/fa';
 
 const RegisterForm = () => {
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { register, error: authError } = useAuth();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -85,30 +85,7 @@ const RegisterForm = () => {
     setError('');
     setLoading(true);
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      setError('Please enter a valid email address');
-      setLoading(false);
-      return;
-    }
-
-    // Validate username
-    if (formData.username.length < 3) {
-      setError('Username must be at least 3 characters long');
-      setLoading(false);
-      return;
-    }
-
-    // Validate password
-    const passwordError = validatePassword(formData.password);
-    if (passwordError) {
-      setError(passwordError);
-      setLoading(false);
-      return;
-    }
-
-    // Validate passwords match
+    // Check if passwords match
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
@@ -116,29 +93,15 @@ const RegisterForm = () => {
     }
 
     try {
-      const { confirmPassword, profilePhoto, ...registerData } = formData;
-      
-      // Create FormData for multipart/form-data
-      const formDataToSend = new FormData();
-      Object.keys(registerData).forEach(key => {
-        if (Array.isArray(registerData[key])) {
-          formDataToSend.append(key, JSON.stringify(registerData[key]));
-        } else {
-          formDataToSend.append(key, registerData[key]);
-        }
-      });
-      
-      if (profilePhoto) {
-        formDataToSend.append('profilePhoto', profilePhoto);
-      }
-      
-      const success = await register(formDataToSend);
-      
+      const success = await register(formData);
       if (success) {
-        navigate('/profile');
+        navigate('/home');
+      } else {
+        // Use the error from AuthContext
+        setError(authError || 'Registration failed. Please check your information.');
       }
     } catch (err) {
-      setError('Registration failed');
+      setError('Registration failed. Please try again later.');
     } finally {
       setLoading(false);
     }

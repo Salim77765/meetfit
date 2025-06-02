@@ -71,6 +71,14 @@ activitySchema.virtual('isFull').get(function() {
   return this.participants.length >= this.maxParticipants;
 });
 
+// Virtual for checking if activity is expired
+activitySchema.virtual('isExpired').get(function() {
+  const now = new Date();
+  const activityEndTime = new Date(this.dateTime);
+  activityEndTime.setMinutes(activityEndTime.getMinutes() + this.duration);
+  return activityEndTime < now;
+});
+
 // Pre-save middleware to update status if activity is full
 activitySchema.pre('save', function(next) {
   if (this.maxParticipants > 0 && this.participants.length >= this.maxParticipants) {

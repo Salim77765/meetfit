@@ -76,8 +76,10 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (err) {
       const errorMessage = err.response?.data?.message;
-      if (errorMessage?.includes('already exists')) {
-        setError('A user with this email or username already exists');
+      if (errorMessage?.includes('Email is already registered')) {
+        setError('This email is already registered. Please use a different email or login.');
+      } else if (errorMessage?.includes('Username is already taken')) {
+        setError('This username is already taken. Please choose a different username.');
       } else if (errorMessage?.includes('Password')) {
         setError(errorMessage);
       } else if (errorMessage?.includes('Email')) {
@@ -85,7 +87,7 @@ export const AuthProvider = ({ children }) => {
       } else if (errorMessage?.includes('Username')) {
         setError('Username must be at least 3 characters long');
       } else {
-        setError('Registration failed. Please try again.');
+        setError(errorMessage || 'Registration failed. Please try again.');
       }
       return false;
     }
@@ -104,8 +106,17 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
         return true;
       }
+      return false;
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      // Extract specific error message from the API response
+      const errorMessage = err.response?.data?.message;
+      if (errorMessage?.includes('User not found')) {
+        setError('No account found with this email. Please check your email or register.');
+      } else if (errorMessage?.includes('Incorrect password')) {
+        setError('Incorrect password. Please try again.');
+      } else {
+        setError(errorMessage || 'Login failed. Please try again.');
+      }
       return false;
     }
   };

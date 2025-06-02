@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 
 // Create uploads directory if it doesn't exist
-const uploadDir = path.join(process.cwd(), process.env.UPLOAD_PATH || 'uploads/');
+const uploadDir = path.join(process.cwd(), 'uploads/');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }

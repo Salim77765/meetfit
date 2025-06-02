@@ -5,7 +5,7 @@ import './LoginForm.css';
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, error: authError } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -30,9 +30,12 @@ const LoginForm = () => {
       const success = await login(formData);
       if (success) {
         navigate('/home');
+      } else {
+        // Use the error from AuthContext
+        setError(authError || 'Login failed. Please check your credentials.');
       }
     } catch (err) {
-      setError('Login failed');
+      setError('Login failed. Please try again later.');
     } finally {
       setLoading(false);
     }

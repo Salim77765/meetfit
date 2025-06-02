@@ -13,6 +13,41 @@ const ChatBot = ({ forcedOpen, onClose }) => {
   const [notifications, setNotifications] = useState([]);
   const messagesEndRef = useRef(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef(null);
+
+  useEffect(() => {
+    if ('webkitSpeechRecognition' in window) {
+      const recognition = new window.webkitSpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onerror = (event) => console.error('Speech recognition error:', event);
+
+      recognition.onresult = (event) => {
+        const transcript = Array.from(event.results)
+          .map(result => result[0])
+          .map(result => result.transcript)
+          .join('');
+        setInputMessage(transcript);
+      };
+
+      recognitionRef.current = recognition;
+    } else {
+      console.warn('Speech recognition not supported in this browser.');
+    }
+  }, []);
+
+  const toggleListening = () => {
+    if (isListening) {
+      recognitionRef.current.stop();
+    } else {
+      recognitionRef.current.start();
+    }
+  };
 
   // Update isOpen when forcedOpen changes
   useEffect(() => {
@@ -341,7 +376,10 @@ const ChatBot = ({ forcedOpen, onClose }) => {
         {isOpen ? '×' : '💬'}
         {!isOpen && notifications.length > 0 && <span className="notification-badge">{notifications.length}</span>}
       </button>
-      
+      {/* Voice control button */}
+      <button onClick={toggleListening} className="voice-control-button">
+        {isListening ? 'Stop Listening' : 'Start Listening'}
+      </button>
       {/* Chatbot dialog */}
       {isOpen && (
         <div className="chatbot-dialog">
@@ -384,4 +422,4 @@ const ChatBot = ({ forcedOpen, onClose }) => {
   );
 };
 
-export default ChatBot; 
+export default ChatBot;
