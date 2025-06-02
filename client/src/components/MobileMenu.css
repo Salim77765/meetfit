@@ -109,5 +109,14 @@
     left: 0;
     border-radius: 0;
     top: 60px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-menu {
+    top: 50px;
+    height: calc(100vh - 50px);
   }
 }

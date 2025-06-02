@@ -1,7 +1,7 @@
 .register-form-container {
-  max-width: min(90%, 800px);
+  max-width: 100%;
   width: 100%;
-  margin: 2rem auto;
+  margin: 1rem auto;
   padding: 2rem;
   background-color: #f9f9f9;
   border-radius: 8px;
@@ -9,6 +9,7 @@
   min-height: min-content;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .photo-upload-group {
@@ -197,6 +198,27 @@
 @media (max-width: 768px) {
   .register-form-container {
     padding: 1.5rem;
-    margin: 0 1rem;
+    margin: 0.5rem auto;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-form-container {
+    padding: 1rem;
+    margin: 0.25rem auto;
+    border-radius: 6px;
+  }
+  
+  .form-group {
+    margin-bottom: 0.75rem;
+  }
+  
+  .register-form-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
   }
 }

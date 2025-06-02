@@ -2,7 +2,7 @@
 
 .home-page-container {
   width: 100%;
-  max-width: 1400px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
@@ -248,15 +248,23 @@
 
 @media (max-width: 900px) {
   .home-page-container {
-    padding: 15px;
+    padding: 15px 10px;
   }
   
   .hero-section {
     padding: 40px 4%;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .hero-content h1 {
     font-size: 2.2rem;
+  }
+  
+  .features-grid,
+  .activities-preview {
+    width: 100%;
+    box-sizing: border-box;
   }
 }
 
@@ -295,12 +303,13 @@
 
 @media (max-width: 480px) {
   .home-page-container {
-    padding: 10px;
+    padding: 10px 5px;
   }
   
   .hero-section {
     padding: 30px 15px;
     margin-bottom: 30px;
+    border-radius: 8px;
   }
   
   .hero-content h1 {
@@ -318,5 +327,17 @@
   .cta-content h2 {
     font-size: 1.6rem;
     margin-bottom: 20px;
+  }
+  
+  .feature-card, 
+  .activity-preview-card {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+  }
+  
+  .cta-section {
+    padding: 30px 15px;
+    border-radius: 8px;
   }
 }

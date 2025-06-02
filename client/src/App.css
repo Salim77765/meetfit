@@ -83,22 +83,20 @@ body {
   color: #4338ca;
 }
 
-/* Dark mode styles for chatbot icon */
-@media (prefers-color-scheme: dark) {
-  .app-header a.chatbot-nav-icon {
-    color: #818cf8;
-  }
-  
-  .app-header a.chatbot-nav-icon:hover {
-    color: #a5b4fc;
-  }
+/* Chatbot icon styles */
+.app-header a.chatbot-nav-icon {
+  color: #4f46e5;
+}
+
+.app-header a.chatbot-nav-icon:hover {
+  color: #4338ca;
 }
 
 /* Main Content Styles */
 .main-content {
   flex: 1;
   padding: 2rem;
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
   width: 100%;
   display: flex;
@@ -106,6 +104,7 @@ body {
   align-items: center;
   justify-content: flex-start;
   min-height: calc(100vh - 64px);
+  box-sizing: border-box;
 }
 
 /* Footer Styles */
@@ -186,6 +185,7 @@ body {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    padding: 0.75rem;
   }
   
   .desktop-nav {
@@ -193,6 +193,16 @@ body {
   }
 
   .main-content {
-    padding: 1rem;
+    padding: 1rem 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 0.5rem;
+  }
+
+  .main-content {
+    padding: 0.75rem 0.5rem;
   }
 }
