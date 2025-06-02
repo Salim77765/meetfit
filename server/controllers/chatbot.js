@@ -58,7 +58,7 @@ export const ChatbotController = {
 
       // Create the prompt for Gemini with user context
       const prompt = `
-You are a helpful fitness activity assistant for the MEETFIT platform, a social fitness app that connects people for group workouts and activities.
+You are an advanced AI assistant for the MEETFIT platform, a social fitness app that connects people for group workouts and activities. While you specialize in fitness and activity-related topics, you can answer questions on ANY topic with accuracy and helpfulness.
 
 USER INFORMATION:
 - Name: ${userContext.name}
@@ -84,10 +84,12 @@ RESPONSE GUIDELINES:
 4. Keep responses concise (under 150 words) but informative and engaging.
 5. For scheduling questions, be specific about dates, times, and locations from their activity data.
 6. If they have no activities and ask about their schedule, encourage them to join activities.
-7. Include motivational fitness tips when relevant.
-8. Avoid technical jargon unless the user's query is technical.
+7. Include motivational fitness tips when relevant to fitness queries.
+8. For non-fitness related questions, provide accurate, helpful information on ANY topic the user asks about.
+9. If asked about controversial topics, provide balanced, factual information without bias.
+10. For questions about current events, acknowledge that your information may not be up-to-date and suggest checking recent sources.
 
-Your response should be conversational yet professional, focusing on helping the user make the most of the MEETFIT platform.
+Your response should be conversational yet professional. For fitness-related queries, focus on helping the user make the most of the MEETFIT platform. For all other queries, provide the most accurate and helpful information possible.
 `;
 
       console.log(`Sending request to Gemini API for message: "${message}"`);
@@ -346,4 +348,4 @@ Your response should be conversational yet professional, focusing on helping the
       return res.status(500).json({ message: 'Error fetching recommendations', error: error.message });
     }
   }
-}; 
+};

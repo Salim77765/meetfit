@@ -293,7 +293,7 @@ const ChatBot = ({ forcedOpen, onClose }) => {
     const lowerMessage = message.toLowerCase();
     
     // Default fallback response
-    let response = "I'm sorry, I'm having trouble connecting to my knowledge base right now. Please try again later.";
+    let response = "I'm sorry, I'm having trouble connecting to my knowledge base right now. Please try again later. For the best experience, please ensure you have a stable internet connection so I can access my full capabilities to answer any question you might have.";
     
     // Activity-related questions
     if (lowerMessage.includes('activity') || lowerMessage.includes('activities') || lowerMessage.includes('events')) {
@@ -312,11 +312,11 @@ const ChatBot = ({ forcedOpen, onClose }) => {
     }
     // Greeting responses
     else if (lowerMessage.includes('hello') || lowerMessage.includes('hi ') || lowerMessage === 'hi' || lowerMessage.includes('hey')) {
-      response = "Hello! I'm your MeetFit Assistant. How can I help you today with your fitness activities? I can help you find activities, provide recommendations, or answer questions about the platform.";
+      response = "Hello! I'm your MeetFit Assistant. I can help you with fitness activities and answer questions on any topic you're curious about. How can I assist you today?";
     }
     // Help responses
     else if (lowerMessage.includes('help') || lowerMessage.includes('what can you do')) {
-      response = "I can help you with: finding activities, providing workout recommendations, answering fitness questions, and keeping track of your scheduled activities. If you want to find an activity, just ask me for recommendations based on your interests!";
+      response = "I can help you with a wide range of topics! For fitness, I can find activities, provide workout recommendations, answer fitness questions, and track your scheduled activities. But I'm also equipped to answer questions about any other subject you're interested in - from science and technology to history, arts, current events, and more. What would you like to know?";
     }
     // Profile related questions
     else if (lowerMessage.includes('profile') || lowerMessage.includes('account') || lowerMessage.includes('settings')) {
@@ -325,6 +325,10 @@ const ChatBot = ({ forcedOpen, onClose }) => {
     // Workout advice
     else if (lowerMessage.includes('workout') || lowerMessage.includes('exercise') || lowerMessage.includes('fitness')) {
       response = "For personalized workout advice, I recommend joining group activities that match your fitness goals. Check the Activities tab for available options. What specific fitness goals are you working toward?";
+    }
+    // General knowledge fallback
+    else {
+      response = "I'd be happy to help with your question about '" + message + "'. For the most accurate and detailed response, please ensure you have a stable internet connection so I can access my full knowledge base. When connected, I can answer questions on virtually any topic!";
     }
     
     return response;
