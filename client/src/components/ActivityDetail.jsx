@@ -11,6 +11,8 @@ const ActivityDetail = () => {
   const [error, setError] = useState(null);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [hasJoined, setHasJoined] = useState(false);
+  const [tempMessages, setTempMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
 
   useEffect(() => {
     const fetchActivityAndUser = async () => {
@@ -50,6 +52,27 @@ const ActivityDetail = () => {
     fetchActivityAndUser();
   }, [id]);
 
+  useEffect(() => {
+    const fetchTempMessages = async () => {
+      if (hasJoined && activity) {
+        try {
+          const res = await axios.get(`/tempchat/${id}`);
+          setTempMessages(res.data);
+        } catch (err) {
+          console.error('Failed to fetch temporary messages:', err);
+        }
+      }
+    };
+
+    fetchTempMessages();
+
+    // Set up an interval to refresh messages every 5 seconds
+    const messageInterval = setInterval(fetchTempMessages, 5000);
+
+    // Clean up interval on component unmount or when activity/hasJoined changes
+    return () => clearInterval(messageInterval);
+  }, [id, hasJoined, activity]);
+
   const handleJoinActivity = async () => {
     try {
       const res = await axios.post(`/activities/${id}/join`);
@@ -76,6 +99,22 @@ const ActivityDetail = () => {
 
   const handleBack = () => {
     navigate(-1);
+  };
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (newMessage.trim() === '') return;
+
+    try {
+      const res = await axios.post(`/tempchat/${id}`, { message: newMessage });
+      if (res.data) {
+        setTempMessages((prevMessages) => [...prevMessages, res.data]);
+        setNewMessage('');
+      }
+    } catch (err) {
+      console.error('Failed to send message:', err);
+      setError(err.response?.data?.message || 'Failed to send message');
+    }
   };
 
   if (loading) return <div className="loading">Loading activity details...</div>;
@@ -168,6 +207,34 @@ const ActivityDetail = () => {
             <p>No participants yet. Be the first to join!</p>
           )}
         </div>
+
+        {hasJoined && (
+          <div className="temp-chat-section">
+            <h3>Temporary Chat (24-hour auto-deletion)</h3>
+            <div className="chat-messages">
+              {tempMessages.length > 0 ? (
+                tempMessages.map((msg) => (
+                  <div key={msg._id} className="chat-message">
+                    <strong>{msg.sender.username}:</strong> {msg.message}
+                    <span className="message-time">{new Date(msg.createdAt).toLocaleTimeString()}</span>
+                  </div>
+                ))
+              ) : (
+                <p>No messages yet. Start the conversation!</p>
+              )}
+            </div>
+            <form onSubmit={handleSendMessage} className="chat-input-form">
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
+                className="chat-input"
+              />
+              <button type="submit" className="send-message-button">Send</button>
+            </form>
+          </div>
+        )}
       </div>
     </div>
   );

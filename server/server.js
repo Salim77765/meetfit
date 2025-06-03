@@ -50,6 +50,7 @@ io.on('connection', (socket) => {
 import authRoutes from './routes/authRoutes.js';
 import activityRoutes from './routes/activityRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
+import tempChatRoutes from './routes/tempChatRoutes.js';
 import chatbotRoutes from './routes/chatbot.js';
 import path from 'path';
 
@@ -57,6 +58,7 @@ import path from 'path';
 app.use('/api/auth', authRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/chats', chatRoutes);
+ app.use('/api/tempchat', tempChatRoutes);
 app.use('/api/chatbot', chatbotRoutes);
 
 // Serve static files

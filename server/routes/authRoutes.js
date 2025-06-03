@@ -1,5 +1,12 @@
 import express from 'express';
-import { register, login, getProfile, updateProfile, updateProfileImage, getUserById } from '../controllers/authController.js';
+import { 
+  register, 
+  login, 
+  getProfile, 
+  updateProfile, 
+  updateProfileImage, 
+  getUserById
+} from '../controllers/authController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { uploadProfileImage } from '../middleware/uploadMiddleware.js';
 
